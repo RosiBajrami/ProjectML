@@ -1,0 +1,10 @@
+Dataset,Best Accuracy,Hidden Layers,Learning Rate,Activation
+data.csv,0.6867469879518072,"(100,)",0.001,logistic
+preprocessed_data.csv,0.7748493975903614,"(100,)",0.01,relu
+feature_engineered_data.csv,0.7710843373493976,"(100,)",0.01,logistic
+preprocessed_minmax.csv,0.7740963855421686,"(50,)",0.001,tanh
+preprocessed_zscore.csv,0.7680722891566265,"(50,)",0.001,logistic
+preprocessed_decimal.csv,0.7703313253012049,"(50,)",0.001,logistic
+fe_minmax.csv,0.7673192771084337,"(50,)",0.001,tanh
+fe_zscore.csv,0.7680722891566265,"(50,)",0.001,logistic
+fe_decimal.csv,0.7688253012048193,"(100,)",0.01,tanh

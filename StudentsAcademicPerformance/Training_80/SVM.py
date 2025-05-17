@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os
 from itertools import product
 from sklearn.model_selection import train_test_split
-from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
 file_paths = [
@@ -18,23 +18,26 @@ file_paths = [
     "../Normalized_Datasets/fe_decimal.csv"
 ]
 
+def detect_delimiter(filepath):
+    with open(filepath, 'r') as file:
+        first_line = file.readline()
+        if first_line.count(';') > first_line.count(','):
+            return ';'
+        else:
+            return ','
+
 datasets = {}
 for path in file_paths:
     try:
-        filename = path.split('/')[-1]
-
-        if filename == "data.csv":
-            df = pd.read_csv(path, delimiter=';')
-        else:
-            df = pd.read_csv(path, delimiter=',')
-
-        datasets[filename] = df
+        delimiter = detect_delimiter(path)
+        df = pd.read_csv(path, delimiter=delimiter)
+        datasets[path.split('/')[-1]] = df
     except Exception as e:
-        datasets[filename] = f"Error loading: {str(e)}"
+        datasets[path.split('/')[-1]] = f"Error loading: {str(e)}"
 
-hidden_layer_sizes = [(50,), (100,), (100, 50)]
-learning_rates = [0.001, 0.01]
-activations = ['relu', 'tanh', 'logistic']
+C_values = [0.1, 1, 10]
+kernels = ['linear', 'rbf']
+gammas = ['scale', 'auto']
 
 results = []
 
@@ -53,51 +56,43 @@ for name, df in datasets.items():
         best_acc = 0
         best_params = {}
 
-        for hls, lr, act in product(hidden_layer_sizes, learning_rates, activations):
+        for c, k, g in product(C_values, kernels, gammas):
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-            model = MLPClassifier(
-                hidden_layer_sizes=hls,
-                learning_rate_init=lr,
-                activation=act,
-                max_iter=500,
-                random_state=42
-            )
-
+            model = SVC(C=c, kernel=k, gamma=g)
             model.fit(X_train, y_train)
             acc = accuracy_score(y_test, model.predict(X_test))
 
             if acc > best_acc:
                 best_acc = acc
                 best_params = {
-                    "Hidden Layers": hls,
-                    "Learning Rate": lr,
-                    "Activation": act
+                    "C": c,
+                    "Kernel": k,
+                    "Gamma": g
                 }
 
         results.append({
             "Dataset": name,
             "Best Accuracy": best_acc,
-            "Hidden Layers": best_params["Hidden Layers"],
-            "Learning Rate": best_params["Learning Rate"],
-            "Activation": best_params["Activation"]
+            "C": best_params["C"],
+            "Kernel": best_params["Kernel"],
+            "Gamma": best_params["Gamma"]
         })
 
     except Exception as e:
         results.append({
             "Dataset": name,
             "Best Accuracy": "Error",
-            "Hidden Layers": "-",
-            "Learning Rate": "-",
-            "Activation": "-"
+            "C": "-",
+            "Kernel": "-",
+            "Gamma": "-"
         })
 
 results_df = pd.DataFrame(results)
 
-output_dir = "output_MLP"
+output_dir = "output_SVM"
 os.makedirs(output_dir, exist_ok=True)
-
-results_path = os.path.join(output_dir, "mlp_results.csv")
+results_path = os.path.join(output_dir, "svm_results.csv")
 results_df.to_csv(results_path, index=False)
 
 plot_data = results_df[results_df["Best Accuracy"] != "Error"]
@@ -105,9 +100,9 @@ plt.figure(figsize=(10, 6))
 plt.bar(plot_data["Dataset"], plot_data["Best Accuracy"])
 plt.xticks(rotation=45, ha='right')
 plt.ylabel("Accuracy")
-plt.title("Best MLP Accuracy per Dataset (with Hyperparameter Tuning)")
+plt.title("Best SVM Accuracy per Dataset (with Hyperparameter Tuning)")
 plt.tight_layout()
-plot_path = os.path.join(output_dir, "mlp_accuracy_plot.png")
+plot_path = os.path.join(output_dir, "svm_accuracy_plot.png")
 plt.savefig(plot_path)
 plt.show()
 
