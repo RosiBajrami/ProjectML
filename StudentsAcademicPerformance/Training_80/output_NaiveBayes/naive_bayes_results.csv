@@ -1,9 +1,0 @@
-Dataset,Accuracy,Best var_smoothing
-data.csv,0.6779661016949152,1e-08
-feature_engineered_data.csv,0.6056497175141243,1e-06
-preprocessed_minmax.csv,0.3231638418079096,1e-06
-preprocessed_zscore.csv,0.3887005649717514,1e-06
-preprocessed_decimal.csv,0.3231638418079096,1e-06
-fe_minmax.csv,0.2655367231638418,1e-06
-fe_zscore.csv,0.327683615819209,1e-06
-fe_decimal.csv,0.2655367231638418,1e-06
