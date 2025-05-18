@@ -1,9 +1,0 @@
-Dataset,Best Accuracy,Model,Parameters
-data.csv,0.6598870056497175,Naive Bayes,Default (no tuning)
-feature_engineered_data.csv,0.26440677966101694,Naive Bayes,Default (no tuning)
-preprocessed_minmax.csv,0.23163841807909605,Naive Bayes,Default (no tuning)
-preprocessed_zscore.csv,0.23954802259887006,Naive Bayes,Default (no tuning)
-preprocessed_decimal.csv,0.23163841807909605,Naive Bayes,Default (no tuning)
-fe_minmax.csv,0.2214689265536723,Naive Bayes,Default (no tuning)
-fe_zscore.csv,0.2248587570621469,Naive Bayes,Default (no tuning)
-fe_decimal.csv,0.2214689265536723,Naive Bayes,Default (no tuning)
