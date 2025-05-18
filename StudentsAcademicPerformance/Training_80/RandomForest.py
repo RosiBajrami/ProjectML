@@ -1,61 +1,94 @@
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
-from imblearn.over_sampling import SMOTE
+from sklearn.preprocessing import LabelEncoder
 
-# Dataset paths
-datasets = {
-    "Original": "../Original_Dataset/data.csv",
-    "Preprocessed": "../Preprocessed_Dataset/preprocessed_data.csv",
-    "FeatureEngineered": "../FeatureEngineered_Dataset/feature_engineered_data.csv",
-    "Pre_MinMax": "../Normalized_Datasets/preprocessed_minmax.csv",
-    "Pre_ZScore": "../Normalized_Datasets/preprocessed_zscore.csv",
-    "Pre_Decimal": "../Normalized_Datasets/preprocessed_decimal.csv",
-    "FE_MinMax": "../Normalized_Datasets/fe_minmax.csv",
-    "FE_ZScore": "../Normalized_Datasets/fe_zscore.csv",
-    "FE_Decimal": "../Normalized_Datasets/fe_decimal.csv"
+# Dataset names and paths (uploaded files)
+rf_datasets = {
+    "data.csv": "data.csv",
+    "preprocessed_minmax.csv": "preprocessed_minmax.csv",
+    "preprocessed_zscore.csv": "preprocessed_zscore.csv",
+    "preprocessed_decimal.csv": "preprocessed_decimal.csv",
+    "feature_engineered_data.csv": "feature_engineered_data.csv",
+    "fe_minmax.csv": "fe_minmax.csv",
+    "fe_zscore.csv": "fe_zscore.csv",
+    "fe_decimal.csv": "fe_decimal.csv"
 }
 
-# Selected parameters to avoid too many combinations
-criteria = ["gini", "entropy"]
-n_estimators_list = [100, 200]
-max_depths = [10, 20]
+rf_results = []
+label_encoder = LabelEncoder()
 
-# Loop through datasets and run cleaner output
-for name, path in datasets.items():
-    for criterion in criteria:
-        for n_estimators in n_estimators_list:
-            for max_depth in max_depths:
-                try:
-                    df = pd.read_csv(path, sep=';' if name == "Original" else ',')
-                    df.columns = df.columns.str.strip()
+# Loop through each dataset and train Random Forest
+for name, path in rf_datasets.items():
+    try:
+        df = pd.read_csv(path, sep=';' if name == "data.csv" else ',')
+        df.columns = df.columns.str.strip()
 
-                    if "Target" not in df.columns:
-                        raise ValueError(f"Target column missing. Actual columns: {df.columns.tolist()}")
+        if "Target" not in df.columns:
+            raise ValueError(f"'Target' column missing in {name}")
 
-                    X = df.drop("Target", axis=1)
-                    y = df["Target"]
+        X = df.drop("Target", axis=1)
+        y = df["Target"]
 
-                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-                    X_train, y_train = SMOTE(random_state=42).fit_resample(X_train, y_train)
+        if y.dtype == 'O':
+            y = label_encoder.fit_transform(y)
 
-                    model = RandomForestClassifier(
-                        n_estimators=n_estimators,
-                        criterion=criterion,
-                        max_depth=max_depth,
-                        class_weight="balanced",
-                        random_state=42
-                    )
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
 
-                    print(f"Running {name} dataset with criterion={criterion}, "
-                          f"n_estimators={n_estimators}, max_depth={max_depth}")
+        model = RandomForestClassifier(
+            n_estimators=100,
+            criterion="gini",
+            max_depth=None,
+            class_weight="balanced",
+            random_state=42
+        )
 
-                    model.fit(X_train, y_train)
-                    y_pred = model.predict(X_test)
-                    accuracy = accuracy_score(y_test, y_pred)
-                    print(f"Accuracy: {accuracy * 100:.2f}%")
-                    print("---")
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        acc = accuracy_score(y_test, y_pred)
 
-                except Exception as e:
-                    print(f"{name:<15} ➤ ❌ Error: {e}")
+        rf_results.append({
+            "Dataset": name,
+            "Best Accuracy": acc,
+            "Model": "Random Forest",
+            "Hyperparameters": "n_estimators=100, criterion=gini, class_weight=balanced"
+        })
+
+    except Exception as e:
+        rf_results.append({
+            "Dataset": name,
+            "Best Accuracy": "Error",
+            "Model": "Random Forest",
+            "Hyperparameters": "n_estimators=100, criterion=gini, class_weight=balanced",
+            "Error": str(e)
+        })
+
+# Create results DataFrame
+rf_summary_df = pd.DataFrame(rf_results)
+
+# Save as CSV
+csv_path = "random_forest_summary_results.csv"
+rf_summary_df.to_csv(csv_path, index=False)
+print(f"✅ CSV saved as: {csv_path}")
+
+# Filter valid rows for plotting
+plot_data = rf_summary_df[rf_summary_df["Best Accuracy"] != "Error"].copy()
+plot_data["Best Accuracy"] = pd.to_numeric(plot_data["Best Accuracy"])
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.bar(plot_data["Dataset"], plot_data["Best Accuracy"], color='skyblue')
+plt.xticks(rotation=45, ha='right')
+plt.ylabel("Accuracy")
+plt.title("Random Forest Accuracy per Dataset")
+plt.tight_layout()
+
+# Save and show plot
+plot_path = "random_forest_accuracy_plot.png"
+plt.savefig(plot_path)
+plt.show()
+
+print(f"✅ Plot saved as: {plot_path}")
+
