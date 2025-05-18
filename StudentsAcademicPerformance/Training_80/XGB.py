@@ -2,7 +2,6 @@ import pandas as pd
 from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from imblearn.over_sampling import SMOTE
 
 # Dataset paths
 datasets = {
@@ -17,12 +16,11 @@ datasets = {
     "FE_Decimal": "../Normalized_Datasets/fe_decimal.csv"
 }
 
-# Tuned parameter grid (limited to avoid overload)
-n_estimators_list = [200, 300]
-learning_rates = [0.05, 0.1]
-max_depths = [6, 8]
-subsamples = [0.8]
-colsample_bytree_list = [0.8]
+n_estimators_list = [500, 600]
+learning_rates = [0.02, 0.03]
+max_depths = [10, 12]
+subsamples = [0.9]
+colsample_bytree_list = [0.9]
 
 for name, path in datasets.items():
     for n_estimators in n_estimators_list:
@@ -43,7 +41,6 @@ for name, path in datasets.items():
                                 y = y.map({'Dropout': 0, 'Enrolled': 1, 'Graduate': 2})
 
                             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-                            X_train, y_train = SMOTE(random_state=42).fit_resample(X_train, y_train)
 
                             model = XGBClassifier(
                                 n_estimators=n_estimators,
@@ -52,7 +49,8 @@ for name, path in datasets.items():
                                 subsample=subsample,
                                 colsample_bytree=colsample,
                                 eval_metric='mlogloss',
-                                random_state=42
+                                random_state=42,
+
                             )
 
                             print(f"Running {name} dataset with n_estimators={n_estimators}, learning_rate={lr}, "
