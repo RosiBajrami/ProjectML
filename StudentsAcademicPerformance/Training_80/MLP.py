@@ -22,19 +22,17 @@ datasets = {}
 for path in file_paths:
     try:
         filename = path.split('/')[-1]
-
-        if filename == "data.csv":
-            df = pd.read_csv(path, delimiter=';')
-        else:
-            df = pd.read_csv(path, delimiter=',')
-
+        delimiter = ';' if filename == "data.csv" else ','
+        df = pd.read_csv(path, delimiter=delimiter)
         datasets[filename] = df
     except Exception as e:
         datasets[filename] = f"Error loading: {str(e)}"
 
-hidden_layer_sizes = [(50,), (100,), (100, 50)]
-learning_rates = [0.001, 0.01]
-activations = ['relu', 'tanh', 'logistic']
+# Fixed hidden layer size and updated hyperparameters
+hidden_layer_sizes = [(64,)]
+learning_rates = [0.001, 0.005]
+activations = ['relu', 'tanh', 'logistic', 'identity']
+solvers = ['adam', 'sgd']
 
 results = []
 
@@ -53,13 +51,14 @@ for name, df in datasets.items():
         best_acc = 0
         best_params = {}
 
-        for hls, lr, act in product(hidden_layer_sizes, learning_rates, activations):
+        for hls, lr, act, solver in product(hidden_layer_sizes, learning_rates, activations, solvers):
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
             model = MLPClassifier(
                 hidden_layer_sizes=hls,
                 learning_rate_init=lr,
                 activation=act,
+                solver=solver,
                 max_iter=500,
                 random_state=42
             )
@@ -72,7 +71,8 @@ for name, df in datasets.items():
                 best_params = {
                     "Hidden Layers": hls,
                     "Learning Rate": lr,
-                    "Activation": act
+                    "Activation": act,
+                    "Solver": solver
                 }
 
         results.append({
@@ -80,7 +80,8 @@ for name, df in datasets.items():
             "Best Accuracy": best_acc,
             "Hidden Layers": best_params["Hidden Layers"],
             "Learning Rate": best_params["Learning Rate"],
-            "Activation": best_params["Activation"]
+            "Activation": best_params["Activation"],
+            "Solver": best_params["Solver"]
         })
 
     except Exception as e:
@@ -89,23 +90,25 @@ for name, df in datasets.items():
             "Best Accuracy": "Error",
             "Hidden Layers": "-",
             "Learning Rate": "-",
-            "Activation": "-"
+            "Activation": "-",
+            "Solver": "-"
         })
 
+# Save results
 results_df = pd.DataFrame(results)
-
 output_dir = "output_MLP"
 os.makedirs(output_dir, exist_ok=True)
 
 results_path = os.path.join(output_dir, "mlp_results.csv")
 results_df.to_csv(results_path, index=False)
 
+# Plot results
 plot_data = results_df[results_df["Best Accuracy"] != "Error"]
 plt.figure(figsize=(10, 6))
 plt.bar(plot_data["Dataset"], plot_data["Best Accuracy"])
 plt.xticks(rotation=45, ha='right')
 plt.ylabel("Accuracy")
-plt.title("Best MLP Accuracy per Dataset (with Hyperparameter Tuning)")
+plt.title("Best MLP Accuracy per Dataset (activation, solver, LR tuned)")
 plt.tight_layout()
 plot_path = os.path.join(output_dir, "mlp_accuracy_plot.png")
 plt.savefig(plot_path)

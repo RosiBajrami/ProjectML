@@ -1,10 +1,10 @@
-Dataset,Best Accuracy,C,Kernel,Gamma
-data.csv,0.7548022598870057,1,linear,scale
-preprocessed_data.csv,0.751412429378531,10,linear,scale
-feature_engineered_data.csv,0.7446327683615819,10,linear,scale
-preprocessed_minmax.csv,0.7457627118644068,10,rbf,scale
-preprocessed_zscore.csv,0.7548022598870057,1,rbf,scale
-preprocessed_decimal.csv,0.7265536723163842,10,linear,scale
-fe_minmax.csv,0.7446327683615819,1,linear,scale
-fe_zscore.csv,0.7502824858757062,1,rbf,scale
-fe_decimal.csv,0.7344632768361582,10,linear,scale
+Dataset,C,Kernel,Gamma,Best Accuracy
+data.csv,1,linear,scale,0.7548022598870057
+preprocessed_data.csv,10,linear,scale,0.751412429378531
+feature_engineered_data.csv,10,linear,scale,0.7446327683615819
+preprocessed_minmax.csv,10,rbf,scale,0.7457627118644068
+preprocessed_zscore.csv,1,rbf,scale,0.7548022598870057
+preprocessed_decimal.csv,10,linear,scale,0.7265536723163842
+fe_minmax.csv,1,linear,scale,0.7446327683615819
+fe_zscore.csv,1,rbf,scale,0.7502824858757062
+fe_decimal.csv,10,linear,scale,0.7344632768361582

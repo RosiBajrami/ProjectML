@@ -1,10 +1,10 @@
-Dataset,Best Accuracy,Hidden Layers,Learning Rate,Activation
-data.csv,0.6867469879518072,"(100,)",0.001,logistic
-preprocessed_data.csv,0.7748493975903614,"(100,)",0.01,relu
-feature_engineered_data.csv,0.7710843373493976,"(100,)",0.01,logistic
-preprocessed_minmax.csv,0.7740963855421686,"(50,)",0.001,tanh
-preprocessed_zscore.csv,0.7680722891566265,"(50,)",0.001,logistic
-preprocessed_decimal.csv,0.7703313253012049,"(50,)",0.001,logistic
-fe_minmax.csv,0.7673192771084337,"(50,)",0.001,tanh
-fe_zscore.csv,0.7680722891566265,"(50,)",0.001,logistic
-fe_decimal.csv,0.7688253012048193,"(100,)",0.01,tanh
+Dataset,Best Accuracy,Hidden Layers,Learning Rate,Activation,Solver
+data.csv,0.6867469879518072,"(64,)",0.001,logistic,adam
+preprocessed_data.csv,0.7649717514124293,"(64,)",0.001,logistic,adam
+feature_engineered_data.csv,0.7649717514124293,"(64,)",0.005,logistic,adam
+preprocessed_minmax.csv,0.7581920903954802,"(64,)",0.001,tanh,adam
+preprocessed_zscore.csv,0.7604519774011299,"(64,)",0.001,identity,sgd
+preprocessed_decimal.csv,0.7627118644067796,"(64,)",0.005,identity,adam
+fe_minmax.csv,0.752542372881356,"(64,)",0.001,identity,adam
+fe_zscore.csv,0.7581920903954802,"(64,)",0.001,tanh,sgd
+fe_decimal.csv,0.7559322033898305,"(64,)",0.005,tanh,adam
