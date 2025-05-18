@@ -65,7 +65,7 @@ plt.tight_layout()
 plt.savefig("hybrid2_pairplot_train.png")
 plt.close()
 
-# --- 3. Pairplot (Test) ---
+# 3. Pairplot (Test) 
 test_df = X_test_clustered.copy()
 test_df["Target"] = y_test_pred
 test_df["Target"] = test_df["Target"].map({0: "Dropout", 1: "Enrolled", 2: "Graduate"})
