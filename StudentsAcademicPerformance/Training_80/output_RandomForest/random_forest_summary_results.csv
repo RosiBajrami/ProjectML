@@ -1,0 +1,9 @@
+Dataset,Best Accuracy,Model,Hyperparameters
+data.csv,0.7774011299435029,Random Forest,"n_estimators=100, criterion=gini, class_weight=balanced"
+preprocessed_minmax.csv,0.7570621468926554,Random Forest,"n_estimators=100, criterion=gini, class_weight=balanced"
+preprocessed_zscore.csv,0.7581920903954802,Random Forest,"n_estimators=100, criterion=gini, class_weight=balanced"
+preprocessed_decimal.csv,0.7548022598870057,Random Forest,"n_estimators=100, criterion=gini, class_weight=balanced"
+feature_engineered_data.csv,0.7581920903954802,Random Forest,"n_estimators=100, criterion=gini, class_weight=balanced"
+fe_minmax.csv,0.7548022598870057,Random Forest,"n_estimators=100, criterion=gini, class_weight=balanced"
+fe_zscore.csv,0.7536723163841808,Random Forest,"n_estimators=100, criterion=gini, class_weight=balanced"
+fe_decimal.csv,0.7559322033898305,Random Forest,"n_estimators=100, criterion=gini, class_weight=balanced"
